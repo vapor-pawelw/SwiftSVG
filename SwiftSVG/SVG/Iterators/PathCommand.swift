@@ -235,6 +235,7 @@ internal struct LineTo: PathCommand {
      Creates a line from the `path.currentPoint` to point `CGPoint(self.coordinateBuffer[0], coordinateBuffer[1])`
      */
     internal func execute(on path: UIBezierPath, previousCommand: PreviousCommand? = nil) {
+        guard self.coordinateBuffer.count >= 2 else { return }
         let point = self.pointForPathType(CGPoint(x: self.coordinateBuffer[0], y: self.coordinateBuffer[1]), relativeTo: path.currentPoint)
         path.addLine(to: point)
     }
@@ -263,6 +264,7 @@ internal struct HorizontalLineTo: PathCommand {
      Adds a horizontal line from the currentPoint to `CGPoint(self.coordinateBuffer[0], path.currentPoint.y)`
      */
     internal func execute(on path: UIBezierPath, previousCommand: PreviousCommand? = nil) {
+        guard self.coordinateBuffer.count >= 1 else { return }
         let x = self.coordinateBuffer[0]
         let point = (self.pathType == .absolute ? CGPoint(x: CGFloat(x), y: path.currentPoint.y) : CGPoint(x: path.currentPoint.x + CGFloat(x), y: path.currentPoint.y))
         path.addLine(to: point)
@@ -292,6 +294,7 @@ internal struct VerticalLineTo: PathCommand {
      Adds a vertical line from the currentPoint to `CGPoint(path.currentPoint.y, self.coordinateBuffer[0])`
      */
     internal func execute(on path: UIBezierPath, previousCommand: PreviousCommand? = nil) {
+        guard self.coordinateBuffer.count >= 1 else { return }
         let y = self.coordinateBuffer[0]
         let point = (self.pathType == .absolute ? CGPoint(x: path.currentPoint.x, y: CGFloat(y)) : CGPoint(x: path.currentPoint.x, y: path.currentPoint.y + CGFloat(y)))
         path.addLine(to: point)
@@ -321,6 +324,7 @@ internal struct CurveTo: PathCommand {
      Adds a cubic Bezier curve to `path`. The path will end up at `CGPoint(self.coordinateBuffer[4], self.coordinateBuffer[5])`. The control point for `path.currentPoint` will be `CGPoint(self.coordinateBuffer[0], self.coordinateBuffer[1])`. Then controle point for the end point will be CGPoint(self.coordinateBuffer[2], self.coordinateBuffer[3])
      */
     internal func execute(on path: UIBezierPath, previousCommand: PreviousCommand? = nil) {
+        guard self.coordinateBuffer.count >= 6 else { return }
         let startControl = self.pointForPathType(CGPoint(x: self.coordinateBuffer[0], y: self.coordinateBuffer[1]), relativeTo: path.currentPoint)
         let endControl = self.pointForPathType(CGPoint(x: self.coordinateBuffer[2], y: self.coordinateBuffer[3]), relativeTo: path.currentPoint)
         let point = self.pointForPathType(CGPoint(x: self.coordinateBuffer[4], y: self.coordinateBuffer[5]), relativeTo: path.currentPoint)
@@ -351,6 +355,7 @@ internal struct SmoothCurveTo: PathCommand {
      Shortcut cubic Bezier curve to that add a new path ending up at `CGPoint(self.coordinateBuffer[0], self.coordinateBuffer[1])` with a single control point in the middle.
      */
     internal func execute(on path: UIBezierPath, previousCommand: PreviousCommand? = nil) {
+        guard self.coordinateBuffer.count >= 6 else { return }
         
         let point = self.pointForPathType(CGPoint(x: self.coordinateBuffer[2], y: self.coordinateBuffer[3]), relativeTo: path.currentPoint)
         let controlEnd = self.pointForPathType(CGPoint(x: self.coordinateBuffer[0], y: self.coordinateBuffer[1]), relativeTo: path.currentPoint)
@@ -417,6 +422,7 @@ internal struct QuadraticCurveTo: PathCommand {
     }
     
     internal func execute(on path: UIBezierPath, previousCommand: PreviousCommand? = nil) {
+        guard self.coordinateBuffer.count >= 4 else { return }
         let controlPoint = self.pointForPathType(CGPoint(x: self.coordinateBuffer[0], y: self.coordinateBuffer[1]), relativeTo: path.currentPoint)
         let point = self.pointForPathType(CGPoint(x: self.coordinateBuffer[2], y: self.coordinateBuffer[3]), relativeTo: path.currentPoint)
         path.addQuadCurve(to: point, controlPoint: controlPoint)
@@ -446,6 +452,7 @@ internal struct SmoothQuadraticCurveTo: PathCommand {
     }
     
     internal func execute(on path: UIBezierPath, previousCommand: PreviousCommand? = nil) {
+        guard self.coordinateBuffer.count >= 4 else { return }
         
         let point = self.pointForPathType(CGPoint(x: self.coordinateBuffer[0], y: self.coordinateBuffer[1]), relativeTo: path.currentPoint)
         
